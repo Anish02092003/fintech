@@ -20,28 +20,44 @@ import CompanyExplain from "../pages/company/Explain";
 // System
 import SystemHealth from "../pages/system/Health";
 
+// Fallbacks
+import NotFound from "../pages/system/NotFound";
+import RouteError from "../pages/system/RouteError";
+
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <AppLayout />,
+    errorElement: <RouteError />,
     children: [
       { index: true, element: <Home /> },
 
+      // -------------------------
       // Individual
+      // -------------------------
       { path: "individual/upload", element: <IndividualUpload /> },
       { path: "individual/dashboard", element: <IndividualDashboard /> },
       { path: "individual/simulations", element: <IndividualSimulations /> },
       { path: "individual/explain", element: <IndividualExplain /> },
 
+      // -------------------------
       // Company
+      // -------------------------
       { path: "company/upload", element: <CompanyUpload /> },
       { path: "company/dashboard", element: <CompanyDashboard /> },
       { path: "company/compare", element: <CompanyCompare /> },
       { path: "company/trends", element: <CompanyTrends /> },
       { path: "company/explain", element: <CompanyExplain /> },
 
+      // -------------------------
       // System
+      // -------------------------
       { path: "system/health", element: <SystemHealth /> },
+
+      // -------------------------
+      // 404
+      // -------------------------
+      { path: "*", element: <NotFound /> },
     ],
   },
 ]);

@@ -4,6 +4,17 @@ import AppLayout from "./app/layout";
 import AppRouter from "./app/router";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./app/router";
+import { RouterProvider } from "react-router-dom";
+import { router } from "./app/router";
+import { AppProvider } from "./context/AppContext";
+
+export default function App() {
+  return (
+    <AppProvider>
+      <RouterProvider router={router} />
+    </AppProvider>
+  );
+}
 
 export default function App() {
   return <RouterProvider router={router} />;
