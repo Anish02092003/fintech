@@ -5,8 +5,8 @@ import PieChartCard from "../../components/charts/PieChartCard";
 import { useAppData } from "../../context/AppContext";
 
 export default function CompanyDashboard() {
-  const { companyData } = useAppData();
-  const data = companyData;
+  const { companyData :data } = useAppData();
+  
 
   if (!data) {
     return (
