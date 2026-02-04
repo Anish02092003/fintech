@@ -12,6 +12,10 @@ from app.api.routes.company_compare import router as company_compare_router
 from app.api.routes.company_trend import router as company_trend_router
 from app.api.routes.company_trend_compare import router as company_trend_compare_router
 from app.api.routes.company_upload import router as company_upload_router
+from app.api.routes.individual_upload import router as individual_upload_router
+
+
+
 
 
 app = FastAPI(
@@ -26,7 +30,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+app.include_router(
+    individual_upload_router,
+    prefix="/api/v1"
+)
 # -------------------------
 # API Routers (v1)
 # -------------------------
