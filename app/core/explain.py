@@ -1,33 +1,43 @@
 from app.services.llm import run_llm
 
 
-def generate_explanation(context: dict, question: str) -> dict:
+def generate_explanation(context: dict, question: str | None = None) -> dict:
     """
     Hybrid explanation engine:
-    1) Always generate a deterministic explanation
-    2) Enhance with local LLM if available
+    1) Deterministic explanation (always works)
+    2) Optional LLM enhancement
     """
 
-    # -------------------------
-    # Rule-based baseline
-    # -------------------------
-    score_delta = context.get("impact", {}).get("score_delta", 0)
+    context = context or {}
+    question = question or "Explain the financial result."
 
+    # -------------------------
+    # Safe extraction
+    # -------------------------
+    impact = context.get("impact", {}) or {}
+    score_delta = impact.get("score_delta", 0)
+
+    # -------------------------
+    # Rule-based explanation
+    # -------------------------
     if score_delta < 0:
         base_explanation = (
-            "Your financial score decreased because increased obligations "
-            "reduced your disposable income and savings capacity."
+            "The financial score decreased because higher obligations "
+            "reduced disposable income and savings capacity."
         )
         confidence = "high"
+
     elif score_delta > 0:
         base_explanation = (
-            "Your financial score improved due to better disposable income "
-            "and reduced financial stress."
+            "The financial score improved due to stronger income balance "
+            "and lower financial stress."
         )
         confidence = "medium"
+
     else:
         base_explanation = (
-            "Your financial score remained stable as the changes had a neutral impact."
+            "The financial score remained stable because the financial "
+            "changes had minimal impact."
         )
         confidence = "medium"
 
@@ -40,8 +50,8 @@ You are a financial analyst assistant.
 
 Rules:
 - Do NOT invent numbers
-- Do NOT provide financial advice
-- ONLY explain based on the given data
+- Do NOT give financial advice
+- Explain clearly and simply
 
 Context:
 {context}
@@ -52,31 +62,34 @@ Question:
 Base explanation:
 {base_explanation}
 
-Enhance the explanation with clearer reasoning in plain English.
+Rewrite the explanation in clearer plain English.
 """
 
-        llm_explanation = run_llm(prompt).strip()
+        llm_explanation = run_llm(prompt)
 
-        return {
-            "explanation": llm_explanation,
-            "confidence": confidence,
-            "assumptions": [
-                "Input data is accurate",
-                "No external financial factors considered"
-            ],
-            "source": "rule + local LLM"
-        }
+        if llm_explanation and isinstance(llm_explanation, str):
+            return {
+                "explanation": llm_explanation.strip(),
+                "confidence": confidence,
+                "assumptions": [
+                    "Input data is accurate",
+                    "Explanation enhanced using local LLM"
+                ],
+                "source": "rule + LLM"
+            }
 
     except Exception:
-        # -------------------------
-        # Safe fallback
-        # -------------------------
-        return {
-            "explanation": base_explanation,
-            "confidence": confidence,
-            "assumptions": [
-                "Input data is accurate",
-                "LLM unavailable, rule-based explanation used"
-            ],
-            "source": "rule-based"
-        }
+        pass
+
+    # -------------------------
+    # Safe fallback
+    # -------------------------
+    return {
+        "explanation": base_explanation,
+        "confidence": confidence,
+        "assumptions": [
+            "Input data is accurate",
+            "Rule-based explanation used"
+        ],
+        "source": "rule-based"
+    }
