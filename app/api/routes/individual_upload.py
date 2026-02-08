@@ -8,7 +8,7 @@ router = APIRouter(prefix="/individual", tags=["Individual Upload"])
 @router.post("/upload")
 def upload_individual_pdf(
     file: UploadFile = File(...),
-    name: str = Form(...),
+    
     pdf_type: str = Form("summary")   # ✅ ADD THIS
 ):
     try:
