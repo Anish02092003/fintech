@@ -8,21 +8,24 @@ router = APIRouter(prefix="/individual", tags=["Individual Upload"])
 @router.post("/upload")
 def upload_individual_pdf(
     file: UploadFile = File(...),
-    
-    pdf_type: str = Form("summary")   # ✅ ADD THIS
+    name: str = Form("User"),   # optional display name
+    pdf_type: str = Form("summary")
 ):
     try:
+        # Parse PDF
         pdf_data = parse_financial_pdf(
             file.file,
-            pdf_type=pdf_type        # ✅ PASS IT
+            pdf_type=pdf_type
         )
 
-        result = analyze_individual_financials(
-            pdf_data,
-            name=None
-        )
+        # Analyze financial profile
+        analysis = analyze_individual_financials(pdf_data)
 
-        return result
+        # Return combined response
+        return {
+            "name": name,
+            **analysis
+        }
 
     except Exception as e:
         raise HTTPException(
