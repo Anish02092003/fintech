@@ -19,7 +19,7 @@ def upload_individual_pdf(
 
         result = analyze_individual_financials(
             pdf_data,
-            name=name
+            name=None
         )
 
         return result
